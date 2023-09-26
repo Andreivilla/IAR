@@ -5,6 +5,7 @@
 import numpy as np
 from ant import Ant
 from random import uniform
+from data import Data
 
 class Enviroment:
     def __init__(self, enviorment=None):
@@ -78,7 +79,7 @@ class Enviroment:
 
         
     #funçao para indicar a area de visão para a formiga
-    def get_ant_vision(self, ant):#(matrix, row, col, scalable_distance):
+    def get_ant_vision(self, ant, euclide=None):#(matrix, row, col, scalable_distance):
         ant_matrix = self.ants_matrix()
         rows = len(ant_matrix)
         cols = len(ant_matrix[0])
@@ -92,7 +93,10 @@ class Enviroment:
             for c in range(max(0, col - ant_degree), min(cols, col + ant_degree + 1)):
                 if r == row and c == col:
                     continue
-                vision.append((self.enviorment_ants[r][c], (r, c)))
+                if euclide == None:#para o calculo da matriz euclideana precisamos dos dados adjacentes que não são necessarios para se mover
+                    vision.append((self.enviorment_ants[r][c], (r, c)))
+                else:
+                    vision.append((self.enviorment[r][c], (r, c)))
 
         return vision
     
@@ -104,10 +108,10 @@ class Enviroment:
     #funçoes para pegar e largar itens e calcular se deve fazer isso
     def get_enviroment_value(self, position):#retorna o valor da posição em que se encontra a formiga
         return self.enviorment[position[0]][position[1]]
-    def take_enviroment_iten(self, position):
-        self.enviorment[position[0], position[1]] = 0
-    def drop_enviroment_iten(self, position):
-        self.enviorment[position[0], position[1]] = 1
+    def take_enviroment_iten(self, position):#pegou o iten troca o iten da matriz por um data nulo
+        self.enviorment[position[0]][position[1]] = Data(0)
+    def drop_enviroment_iten(self, position, iten):
+        self.enviorment[position[0]][position[1]] = iten#troca o iten do local pelo da formiga
     def get_rowcol(matriz):
         return len(matriz), len(matriz[0])
     
@@ -115,19 +119,19 @@ class Enviroment:
     def mov_ants(self):
         for ant in self.ants:            
             ant_vision = self.get_ant_vision(ant)
-            #identificar se o espaço ocupado pela formiga tem um iten para então ela decidir se solta ou pega
-            point_value = self.get_enviroment_value(ant.get_position())
-
-            #espaço 
             
-            '''
-            if point_value > 1:#ponto com iten decidir se formiga pega ou não o iten
-                if ant.take_iten(ant_vision):
+            #decizão de take ou drop
+            #identificar se o espaço ocupado pela formiga tem um iten para então ela decidir se solta ou pega
+            ant.set_underiten(self.get_enviroment_value(ant.get_position()))
+            ant_vision_data = self.get_ant_vision(ant, 1) #o 1 poderia ser qualquer valor
+            
+            if int(ant.get_underiten().get_name()) >= 1:#ponto com iten decidir se formiga pega ou não o iten
+                if ant.take_iten(ant_vision_data):
                     self.take_enviroment_iten(ant.get_position())
-            else:#ponto ocupado decidir se a formiga deve pegar algo
-                if ant.drop_iten(ant_vision):
-                    self.drop_enviroment_iten(ant.get_position())
-            '''
+            else:#ponto vazio decidir se a formiga deve largar algo
+                iten_drop = ant.drop_iten(ant_vision_data)
+                if iten_drop != False:
+                    self.drop_enviroment_iten(ant.get_position(), iten_drop)
 
             ant.mov_ant(ant_vision)
 

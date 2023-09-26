@@ -8,7 +8,7 @@ from data import Data
 #linha por coluna
 #ROW, COL, DENSITY = 60, 60, 3#Numero de linhas da matriz, numero de colunas, densidade de itens
 NUM_ANTS = 50
-ITENRACAO = 100000000
+ITENRACAO = 2000000
 #relacionado com o tamanho do front
 CELL_SIZE = 10
 
