@@ -24,21 +24,24 @@ class Ant:
     
     def get_iten(self):
         return self.iten
-        
     
     #mov_ant deve receber a visão do ambiente com base em seu grau de visão e retornar um movimento valido    
     def mov_ant(self, vision):
         adjacent_values = []
         row, col = self.get_position()
+
         #armazena todos os valores adjacentes onde a formiga pode se mover
         for value, point in vision:
             if point[0] == row or point[1] == col:
-                if value == 0 or value == 1:#a formiga só pode andar pra 0 ou 1 nunca -1 ou outra formiga x
+                if value == 'b':
+                    continue
+                elif int(value) >= 0:#a formiga só pode andar pra 0 ou 1 nunca -1 ou outra formiga x
                     adjacent_values.append((value, point))
-        
+
         if len(adjacent_values) != 0:
             move_position = random.choice(adjacent_values)[1]
             self.position = move_position
+
      
     
     def chance(self, vision):
@@ -78,7 +81,7 @@ class Ant:
             if chance == 0:#se a chance for zero não pega os itens
                 return False
 
-            if self.chance_choice(chance**2):#sorteia uma chance
+            if self.chance_choice(chance):#sorteia uma chance
                     self.take()
                     #self.iten = True#pega iten
                     return True#retorna o comando de pegar para a matriz
@@ -95,7 +98,7 @@ class Ant:
                 return True
 
             #sorteia a chance e altera se esta descarregada
-            if self.chance_choice(chance**2):
+            if self.chance_choice(chance):
                 self.drop()
                 #self.iten = False
                 return True

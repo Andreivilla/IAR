@@ -6,6 +6,7 @@ class Ant:
         self.id = id
         self.name = name#nome para exibição apenas
         self.position = position #(i,j)
+        self.last_position = position
         self.iten = False
         self.vision_degree = degree 
     
@@ -24,18 +25,28 @@ class Ant:
     
     def get_iten(self):
         return self.iten
-        
+    
+    def update_last_position(self):
+        self.last_position = self.position
     
     #mov_ant deve receber a visão do ambiente com base em seu grau de visão e retornar um movimento valido    
     def mov_ant(self, vision):
-        adjacent_values = []
+        adjacent_values = []#valores adjacentes para onde uma formiga deve ir
+
         row, col = self.get_position()
+
         #armazena todos os valores adjacentes onde a formiga pode se mover
         for value, point in vision:
             if point[0] == row or point[1] == col:
                 if value == 0 or value == 1:#a formiga só pode andar pra 0 ou 1 nunca -1 ou outra formiga x
                     adjacent_values.append((value, point))
-        
+            
+
+        #remove da lista de lugares a andar a posição de onde a formiga veio se estiver lá
+        if self.last_position in adjacent_values:
+            adjacent_values.remove(self.last_position)
+            self.update_last_position()#atualiza a ultima posição alcançada para a posição atual
+
         if len(adjacent_values) != 0:
             move_position = random.choice(adjacent_values)[1]
             self.position = move_position
@@ -78,7 +89,7 @@ class Ant:
             if chance == 0:#se a chance for zero não pega os itens
                 return False
 
-            if self.chance_choice(chance):#sorteia uma chance
+            if self.chance_choice(chance**2):#sorteia uma chance
                     self.take()
                     #self.iten = True#pega iten
                     return True#retorna o comando de pegar para a matriz
@@ -95,7 +106,7 @@ class Ant:
                 return True
 
             #sorteia a chance e altera se esta descarregada
-            if self.chance_choice(chance):
+            if self.chance_choice(chance**2):
                 self.drop()
                 #self.iten = False
                 return True
