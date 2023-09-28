@@ -137,12 +137,12 @@ class Enviroment:
 
             #variavel pra matar as formigas
             if self.end:
-                if ant.get_iten() == False:#formiga vazia morre
+                if ant.iten_load == False:#formiga vazia morre
+
                     self.kill_ant(ant)
 
     def end_simulation(self):
-        self.end = True
-    
+        self.end = True    
     
     #isso pode ser inutil p krl
     def kill_ants(self):
