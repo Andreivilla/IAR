@@ -1,0 +1,5 @@
+SAT
+    (x1 || x2 || x3) && (x4 || x5 || x6)
+
+    Dada alguma expressão, existe alguma atribuição de valores verdadeiros e falsos
+    para as variáveis de fforma que o resultado de toda a expressão seja verdadeira?
