@@ -1,3 +1,7 @@
+#ti = temperatura para o ciclo i
+#i vai de 0 a N
+#T0 éa  temperatura inicial 
+#TN é a temperatura final
 import random
 import matplotlib.pyplot as plt
 
@@ -104,11 +108,11 @@ def random_search(initial_solution, max_iter, var_dict, matrix, num_rows, max_ra
             iter.append(it)
 
     # Plotar o gráfico
-    plt.ylim(0, num_rows)
-    plt.plot(range(0, len(iter)+1), scores)
-    plt.xlabel('Número de Iterações (Núm. Iterações/Range)')
-    plt.ylabel('Número de Cláusulas Satisfeitas')
-    # plt.show()
+    #plt.ylim(0, num_rows)
+    #plt.plot(range(0, len(iter)+1), scores)
+    #plt.xlabel('Número de Iterações (Núm. Iterações/Range)')
+    #plt.ylabel('Número de Cláusulas Satisfeita')
+    #plt.show()
     #plt.savefig('rs.png')
     #plt.close()
 
@@ -124,11 +128,23 @@ def simulated_annealing(initial_solution, var_dict, matrix, max_iter, t, num_var
 
     rangeScore = 0
     scores = [best_score]  # lista para armazenar os scores a cada iteração
+
     temp = []
     iter = []
 
+
     for it in range(max_iter):
+        #isso aqui é o cooling mas eu nem sei qual é esse cooling
+        #ti = temperature 
+        #i = it vai de 0 a N
+        #T0 = t éa  temperatura inicial 
+        #TN = 0 ? é a temperatura final
+        #N = max_iter
+        #result_sa = simulated_annealing(initial_solution, var_dict, matrix, num_it, 4, num_var, num_rows, max_range)
         temperature = (1 - (it/max_iter)) ** t
+        #temperature = t * (1/t)**(it/max_iter)
+        #temperature = t - it*((t-0.1)/max_iter)
+
 
         # Gerar vizinho aleatório
         neighbor = generate_neighbor(current_solution, num_var)
@@ -159,20 +175,38 @@ def simulated_annealing(initial_solution, var_dict, matrix, max_iter, t, num_var
             temp.append(temperature)
             iter.append(it)
 
+
             print(temperature)
 
     # Plotar o gráfico
     # plt.ylim(0, num_rows)
-    plt.plot(range(0, len(iter)+1), scores)
-    plt.xlabel('Número de Iterações (Núm. Iterações/Range)')
-    plt.ylabel('Número de Cláusulas Satisfeitas')
-    plt.savefig('convergencia.png')
-    plt.close()
-
-    plt.plot(iter, temp)
+    ax1 = plt.subplot()
+    ax1.plot(range(0, len(scores)), scores)
+    ax1.set_ylabel('Número de Cláusulas Satisfeitas')
     plt.xlabel('Número de Iterações')
-    plt.ylabel('Temperatura')
+    ax1.tick_params(axis='y', labelcolor='b')
+
+    ax2 = ax1.twinx()
+    ax2.plot(range(0, len(temp)), temp)
+    ax2.set_ylabel('Temperatura', color='r')
+    ax2.tick_params(axis='y', labelcolor='r')
+
+
+
+
+
+    #plt.plot(range(0, len(iter)+1), scores)
+    #plt.xlabel('Número de Iterações (Núm. Iterações/Range)')
+    #plt.ylabel('Número de Cláusulas Satisfeitas')
+    #plt.savefig('convergencia.png')
+    #plt.close()
+
+    #plt.plot(iter, temp)
+    #plt.xlabel('Número de Iterações')
+    
+    #plt.ylabel('Temperatura')
     plt.savefig('temperatura.png')
+    
     plt.close()
 
     return map_b_solution, best_score
@@ -190,8 +224,7 @@ results_sa = []
 results_rs = []
 
 for i in range(2):
-    result_sa = simulated_annealing(
-        initial_solution, var_dict, matrix, num_it, 4, num_var, num_rows, max_range)
+    result_sa = simulated_annealing(initial_solution, var_dict, matrix, num_it, 4, num_var, num_rows, max_range)
     results_sa.append(result_sa)
 
     result_rs = random_search(initial_solution, num_it,
